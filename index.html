@@ -46,6 +46,7 @@ app.controller("Controller", function($scope, $http, $interval) {
 		$scope.sortby = key;
 	};
 	$scope.affiliate = null;
+	$scope.athletes = null;
 	try {
 		$scope.affiliate = location.search.substring(1);
 	} catch(e) { } 
@@ -54,6 +55,9 @@ app.controller("Controller", function($scope, $http, $interval) {
 		var athletes;
 		$http.get(url).success( function(data) {
 			athletes = data.athletes;
+			if (athletes.length==0) {
+				$scope.athletes = athletes; return;
+			}
 			athletes.forEach(function(a) {
 				a.overallrank = +a.overallrank;
 				a.overallscore = +a.overallscore;
@@ -96,13 +100,14 @@ app.controller("Controller", function($scope, $http, $interval) {
 <div ng-controller="Controller">
 
 <div ng-if="!affiliate">
+	<b>Crossfit Open 2017 Affiliate Leaderboard</b><br>
 	Show results for affiliate ID (ex: 1234): <input id="a"><input type="button" value="Go" onclick="window.location=window.location.href.replace(/\?.*/,'')+'?'+document.getElementById('a').value">
 </div>
 <div ng-if="affiliate">
-	<div ng-if="!athletes">Loading...</div>
+	<div ng-if="athletes==null">Loading...</div>
 	<div ng-if="athletes && athletes.length==0">No athletes found for that affiliate ID</div>
 	<div ng-if="athletes && athletes.length>0">
-	<b>Crossfit Open 2017</b> <i>(Click column headers to sort, click rows to select)</i> - Auto reload in {{counter}} minutes
+	<b>Crossfit Open 2017 - Affiliate {{affiliate}}</b> <i>(Click column headers to sort, click rows to select)</i> - Auto reload in {{counter}} minutes
 	<table>
 	<thead>
 		<tr>
